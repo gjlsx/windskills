@@ -22,7 +22,9 @@ Each tasklist should include:
 3. overall task description
 4. generation time
 5. tasklist status, creator, and inheritance source
-6. participant roles
+6. participant roles  
+   :example: -`codex`（bug修复/验证,`codex` is do the task's ai name）
+            - `wind`（业务验收,here wind is human）
 7. decomposed task table
 8. tasklist self-review result
 
