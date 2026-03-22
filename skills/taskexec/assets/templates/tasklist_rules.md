@@ -27,6 +27,8 @@ Each tasklist should include:
 ## Tasklist Naming
 
 - file name format: `tasklistMMDDhhmm.md`
+  tasklist example see : `assets/templates/tasklist03171111.md` ,
+- Claim task file example see: `assets/templates/t03200058.p910.md` ,
 
 ## Task Planning Rules
 
@@ -72,15 +74,17 @@ Keep this table structure unchanged unless the repository intentionally adopts a
 After the tasklist is created, the creator must perform a self-review.
 
 The review should ensure:
-
 - the tasklist reasonably covers the intended requirement
 - task decomposition is executable
 - there are no obvious dependency or ordering issues
 - business numeric rules are configuration-first when required
 
 Review result must be one of:
-
 - `pass`
 - `fail`
-
 If review is `fail`, revise the tasklist and review again until it passes.
+
+## commit tasklist and add it to tasklistall.md
+   1.after review ok before doing task, registering the tasklist in `tasklistall.md`, append only the allowed entry.
+   2.after review ok before doing task, must had a git commit change files done  with  msg include: tasklistname + desc info,
+   after commit ok, could go to next step

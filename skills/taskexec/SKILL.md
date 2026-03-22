@@ -12,14 +12,14 @@ Execute tasklist-driven work in a repository that stores process rules in files.
 ## When to Use
 
 Use this skill when the repository has task management files such as:
-
+usually in the root dir in projec:
 - `.agent-rules.md`
 - `tasklist_rules.md`
 - `tasklistall.md`
 - `tasks/locks/`
 - `tasks/<agent>/`
 
-Do not use this skill for ad-hoc coding requests that are not driven by a tasklist.
+Do not use this skill for human direct requests codeing  not driven by a tasklist.
 
 ## Required Inputs
 
@@ -39,6 +39,10 @@ If the repository is being set up for taskexec for the first time, bootstrap loc
 - `assets/templates/.agent-rules.md`
 - `assets/templates/tasklist_rules.md`
 
+a example tasklist is:
+- `assets/templates/tasklist03171111.md`
+
+
 For repository prerequisites and expected file layout, read `references/repo-contract.md`.
 
 ## Mode A: Build Tasklist
@@ -47,14 +51,30 @@ Use this mode when the user asks to create a new tasklist.
 
 1. Read `.agent-rules.md` and `tasklist_rules.md`.
 2. Extract the exact tasklist schema, field rules, status vocabulary, and review requirements from local rules.
-3. Build the tasklist in the repository's required markdown structure.
-4. Keep the task table columns exactly as defined by local rules.
-5. Plan tasks with test-first intent:
-   - define expected behavior
-   - define validation path
-   - then define implementation work
+   Use required tasklist structure:
+   1) Overall task name
+   2) Overall description
+   3) Generation time
+   4) Tasklist status and inheritance source
+   5) Participant roles
+   6) Decomposed task table
+3. Keep table structure unchanged:
+   `Status | TaskID | Project | Title | Description | Type | Priority | Role | Owner | Depends | module | Claim | Finish | Report | Git | Review | Score`
+   Enforce field rules:
+   - `TaskID`: `tYYMMDD.pXXX`
+   - `Claim`: `startat:YYMMDDHHMMSS <agent> tasks/<agent>/<taskid>.md`
+   - `Finish`: `finishat:YYMMDDHHMMSS`
+   - `Review`: one of `pass:no-refactor-needed`, `pass:minor-refactor-done`, `partial:needs-followup`
+   - `Git`: commit hash
+4. Enforce status vocabulary only:
+   - `todo`, `doing`, `blocked`, `partial`, `pending`, `done`, `cancelled`
+5. Plan tasks with test-first principle:
+   - Define expected input/output and validation path before implementation details.
 6. Run the required self-review for the new tasklist before claiming it is ready.
-7. If the repository requires registering the tasklist in `tasklistall.md`, append only the allowed entry.
+7. registering the tasklist in `tasklistall.md`, append only the allowed entry.
+8. after review ok before doing task, must had a git commit change files done  with  msg include: tasklistname + desc`,
+   after commit ok, could go to next step
+
 
 ## Mode B: Execute Tasklist
 
@@ -62,29 +82,34 @@ Use this mode when the user asks to run tasks from an existing tasklist.
 
 ### Startup Sequence
 
-1. Read required rule and memory files.
-2. Scan `tasks/locks/` for your own active lock.
-3. If your own unfinished lock exists, resume that task first.
-4. If no own active lock exists, select the first eligible task for your role from the target tasklist.
-5. Check task dependencies before claiming work.
-6. Confirm no other agent lock exists for the same task.
-7. Create your lock.
-8. Claim the task in the tasklist.
-9. Execute the task.
-10. Run the required verification.
-11. Perform self-review.
-12. If refactor is required, repeat execute -> verify -> self-review.
-13. Update only the allowed tasklist fields.
-14. Remove your lock.
+1. Read required rule and memory files. Read `.agent-rules.md` , `tasklist_rules.md`,Read target tasklist
+2.3.4 steps skip because it is in step 1.
+5. scan `tasks/locks/` or project's lock files dir for your own lock using filename pattern: `<agent name>_<taskid>.lock`
+6. if your own lock exists:
+   - inspect related task status in `tasklistall.md`  or input/linkto `tasklistxxx.md` file!
+   - if task is already `done` or `cancelled`, delete the lock
+   - otherwise resume that task directly
+7. if no active own lock exists, find first matching `todo` task for your role
+8. check dependencies
+9. create lock
+10. claim task
+11. execute
+12. run tests
+13. self code review
+14. if refactor is needed, repeat execute -> test -> self review until no refactor is needed
+15. After done a task, the executor must commit all changed files with  message describing what was done (if it is task then msg must include whole-taskid like : `codex_t03160314.p10`).
+16. update tasklist ,if had commit you must update hash to the tasklist 
+17. remove lock 
 
 ## Locking Rules
 
 - Hold only one active lock at a time.
 - Never take over another agent's lock.
-- Use the repository's lock naming convention from local rules.
+- Use the repository's lock naming convention from local rules.  Lock file pattern: `<agent>_<taskid>.lock`
 - If local rules and the current tasklist conflict, follow `.agent-rules.md` first.
+- If an AI already has an unfinished lock task, it must continue that task first.
 
-## Allowed Tasklist Updates
+## Allowed Tasklist Updates and  File Modifications
 
 As an executor, update only the fields allowed by local rules. In most repositories these are:
 
@@ -99,18 +124,28 @@ As an executor, update only the fields allowed by local rules. In most repositor
 
 Do not modify the tasklist table structure unless the user explicitly asked you to redesign the tasklist format.
 
+Only modify files required by rule and task:
+- own task log: `tasks/<agent>/...`
+- own lock: `tasks/locks/<agent>_<taskid>.lock`
+- allowed tasklist fields in the target tasklist file
+- code/tests/docs directly required by the claimed task
+
 ## Verification Rules
 
 - Never mark a task `done` without fresh verification evidence.
 - Run the repository's required test or validation command.
-- If no automated tests exist, record minimal manual validation evidence in the task report.
+- If no automated tests exist, add minimal validation or record clear manual evidence in the task report.
 - Self-review must confirm:
   - requirement satisfied
-  - verification passed
+  - verification passed/tests passed
   - no obvious duplicate logic left unhandled
   - naming is consistent
   - no required refactor remains
   - task log is complete
+
+## to backup a done tasklist 
+   when no point to by others directly a different dir, move it to /docs/backuptask/
+
 
 ## Quick Reference
 
