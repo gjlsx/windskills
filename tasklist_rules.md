@@ -55,7 +55,7 @@ Keep this table structure unchanged unless the repository intentionally adopts a
 - `Role`: target executor role
 - `module`: area such as `frontend`, `backend`, `docs`, or other local module names
 - `Depends`: comma-separated task IDs or empty
-- `Claim`: `startat:YYMMDDHHMMSS <agent> tasks/<agent>/<taskid>.md`
+- `Claim`: `startat:YYMMDDHHMMSS <agent> tasks/tasklog/<agent>_<taskid>.md`
 - `Finish`: `finishat:YYMMDDHHMMSS`
 - `Review`: `pass:no-refactor-needed`, `pass:minor-refactor-done`, or `partial:needs-followup`
 - `Score`: a score such as `91/100`
