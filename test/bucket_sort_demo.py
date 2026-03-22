@@ -29,7 +29,6 @@ def main() -> None:
     numbers = [random.randint(0, 999) for _ in range(100)]
     bucket_sorted = bucket_sort(numbers)
     expected = sorted(numbers)
-
     if bucket_sorted != expected:
         raise ValueError("Bucket sort output does not match built-in sorted output")
 
