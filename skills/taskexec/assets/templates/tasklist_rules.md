@@ -11,11 +11,12 @@ Scheduler creates and maintains the structure of the tasklist. Executor may upda
 - `Review`
 - `Score`
 
+`tasklist_rules.md` is the single source of truth for required tasklist structure, fixed columns, status vocabulary, and `TaskID` format.
+
 ## Required Tasklist Structure
 
 Each tasklist should include:
-
-1. tasklist file name
+1. tasklist title 
 2. overall task name
 3. overall task description
 4. generation time
@@ -27,8 +28,9 @@ Each tasklist should include:
 ## Tasklist Naming
 
 - file name format: `tasklistMMDDhhmm.md`
-  tasklist example see : `assets/templates/tasklist03171111.md` ,
-- Claim task file example see: `assets/templates/t03200058.p910.md` ,
+  tasklist example see: `assets/templates/tasklist03171111.md`
+- when using `taskexec` to build a tasklist, the root agent should execute `git add <tasklist_file>` and `git commit -m "tasklist filename + overall task title/description"` upon self-review success.
+- Claim task file example see: `assets/templates/t03200058.p910.md`
 
 ## Task Planning Rules
 
@@ -44,7 +46,7 @@ Keep this table structure unchanged unless the repository intentionally adopts a
 
 | Status | TaskID | Project | Title | Description | Type | Priority | Role | Owner | Depends | module | Claim | Finish | Report | Git | Review | Score |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| todo | t03230001.p001 | demo-project | Example title | Example description | feature | P1 | codex |  |  | backend |  |  |  |  |  |  |
+| todo | t03231200.p001 | demo-project | Example title | Example description | feature | P1 | codex |  |  | backend |  |  |  |  |  |  |
 
 ## Field Rules
 
@@ -85,6 +87,10 @@ Review result must be one of:
 If review is `fail`, revise the tasklist and review again until it passes.
 
 ## commit tasklist and add it to tasklistall.md
-   1.after review ok before doing task, registering the tasklist in `tasklistall.md`, append only the allowed entry.
-   2.after review ok before doing task, must had a git commit change files done  with  msg include: tasklistname + desc info,
+   1.after review ok before doing task, registering the tasklist in `tasklistall.md` according to the repository `.agent-rules.md`, append only the allowed entry.
+   2.after review ok before doing task, must had a git commit change files done with msg include: `tasklist filename + overall task title/description`,
    after commit ok, could go to next step
+
+## tasklistall.md is only a tasklist index file in the project.
+`tasklistall.md` is only an index of all tasklist files in the project.
+Its default paths, index format, and concrete tasklist resolution rules are defined in the repository `.agent-rules.md`.

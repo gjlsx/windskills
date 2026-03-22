@@ -1,23 +1,23 @@
 # Lock File Template
 
 Filename format:
-`<agent>+<taskid>.lock`
+`<agent>_<taskid>.lock`
 
 Examples:
-- `codex+t0316.p10.lock`
-- `claude+t0316.p11.lock`
+- `codex_t03231200.p001.lock`
+- `claude_t03231200.p002.lock`
 
 Content template:
 
 ```yaml
 agent: codex
-task: t0316.p10
+task: t03231200.p001
 owner: Codex
 project: demo-project
 created_at: 260316185749
 updated_at: 260316185749
 status: doing
-log: tasks/codex/t0316.p10.md
+log: tasks/codex/t03231200.p001.md
 ```
 
 Rules:

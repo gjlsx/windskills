@@ -28,16 +28,22 @@ Read these files in order before taking action:
 1. Repository-root `.agent-rules.md`
 2. Repository-root `tasklist_rules.md`
 3. The target tasklist file named by the user
-4. If no tasklist file was provided, repository-root `tasklistall.md`
-5. `memorys/global.md` if it exists
+4. If no tasklist file was provided, repository-root `tasklistall.md` as the default tasklist index
+5. `memorys/global.md` as the default global memory file, if it exists
 6. Project memory referenced by the global memory file or local rules, if it exists
 
-If a required rule file is missing, stop and report the missing file instead of guessing.
+Default paths and configuration:
 
-If the repository is being set up for taskexec for the first time, bootstrap local rule files from these bundled templates:
+- Repository-local default paths and tasklist resolution rules are defined in the repository's own `.agent-rules.md`.
+- On first run, bootstrap `.agent-rules.md` from `assets/templates/.agent-rules.md` and use it as the single source of truth for path layout and tasklist resolution.
 
-- `assets/templates/.agent-rules.md`
-- `assets/templates/tasklist_rules.md`
+All formatting rules for tasks (TaskID `tMMDDhhmm.pXXX`, status vocabulary, columns) are defined exclusively in `tasklist_rules.md`.
+
+**Initialization**: If the repository is being set up for taskexec for the first time (files are missing), you must bootstrap them:
+- Copy `assets/templates/.agent-rules.md` and `assets/templates/tasklist_rules.md` to the root directory.
+- Create the files/directories required by the repository's `.agent-rules.md`.
+- Write the active default/custom paths into the repository's `.agent-rules.md`.
+- When building the first tasklist, create `tasklistMMDDhhmm.md`.
 
 a example tasklist is:
 - `assets/templates/tasklist03171111.md`
@@ -50,29 +56,13 @@ For repository prerequisites and expected file layout, read `references/repo-con
 Use this mode when the user asks to create a new tasklist.
 
 1. Read `.agent-rules.md` and `tasklist_rules.md`.
-2. Extract the exact tasklist schema, field rules, status vocabulary, and review requirements from local rules.
-   Use required tasklist structure:
-   1) Overall task name
-   2) Overall description
-   3) Generation time
-   4) Tasklist status and inheritance source
-   5) Participant roles
-   6) Decomposed task table
-3. Keep table structure unchanged:
-   `Status | TaskID | Project | Title | Description | Type | Priority | Role | Owner | Depends | module | Claim | Finish | Report | Git | Review | Score`
-   Enforce field rules:
-   - `TaskID`: `tYYMMDD.pXXX`
-   - `Claim`: `startat:YYMMDDHHMMSS <agent> tasks/<agent>/<taskid>.md`
-   - `Finish`: `finishat:YYMMDDHHMMSS`
-   - `Review`: one of `pass:no-refactor-needed`, `pass:minor-refactor-done`, `partial:needs-followup`
-   - `Git`: commit hash
-4. Enforce status vocabulary only:
-   - `todo`, `doing`, `blocked`, `partial`, `pending`, `done`, `cancelled`
-5. Plan tasks with test-first principle:
+2. Extract the exact tasklist schema, field rules, status vocabulary, and review requirements from `tasklist_rules.md`.
+3. `tasklist_rules.md` is the single source of truth for the tasklist structure, fixed columns, status vocabulary, and `TaskID` (`tMMDDhhmm.pXXX`). Do not rely on duplicate details here.
+4. Plan tasks with test-first principle:
    - Define expected input/output and validation path before implementation details.
-6. Run the required self-review for the new tasklist before claiming it is ready.
-7. registering the tasklist in `tasklistall.md`, append only the allowed entry.
-8. after review ok before doing task, must had a git commit change files done  with  msg include: tasklistname + desc`,
+5. Run the required self-review for the new tasklist before claiming it is ready.
+6. registering the tasklist in `tasklistall.md` as an index, append only the allowed entry.
+7. after review ok before doing task, must had a git commit change files done with msg include: `tasklist filename + overall task title/description`,
    after commit ok, could go to next step
 
 
@@ -82,11 +72,13 @@ Use this mode when the user asks to run tasks from an existing tasklist.
 
 ### Startup Sequence
 
-1. Read required rule and memory files. Read `.agent-rules.md` , `tasklist_rules.md`,Read target tasklist
-2.3.4 steps skip because it is in step 1.
-5. scan `tasks/locks/` or project's lock files dir for your own lock using filename pattern: `<agent name>_<taskid>.lock`
+1. Read required rule and memory files. Read `.agent-rules.md`, `tasklist_rules.md`, and read the target tasklist file named by the user.
+2. If no target tasklist file was provided, read `tasklistall.md` as the default index and resolve the target concrete `tasklistMMDDhhmm.md` file using the repository's `.agent-rules.md`.
+3. Read `memorys/global.md` if it exists or use the path defined in `.agent-rules.md`.
+4. Use the fixed defaults only when `.agent-rules.md` does not define another path.
+5. scan `tasks/locks/` or project's lock files dir for your own lock using filename pattern: `<agent>_<taskid>.lock`
 6. if your own lock exists:
-   - inspect related task status in `tasklistall.md`  or input/linkto `tasklistxxx.md` file!
+   - inspect related task status in the resolved concrete tasklist file
    - if task is already `done` or `cancelled`, delete the lock
    - otherwise resume that task directly
 7. if no active own lock exists, find first matching `todo` task for your role
@@ -97,7 +89,7 @@ Use this mode when the user asks to run tasks from an existing tasklist.
 12. run tests
 13. self code review
 14. if refactor is needed, repeat execute -> test -> self review until no refactor is needed
-15. After done a task, the executor must commit all changed files with  message describing what was done (if it is task then msg must include whole-taskid like : `codex_t03160314.p10`).
+15. After completing a task, the executor must commit all changed files. Follow the commit rules defined in `.agent-rules.md`.
 16. update tasklist ,if had commit you must update hash to the tasklist 
 17. remove lock 
 
@@ -105,24 +97,14 @@ Use this mode when the user asks to run tasks from an existing tasklist.
 
 - Hold only one active lock at a time.
 - Never take over another agent's lock.
-- Use the repository's lock naming convention from local rules.  Lock file pattern: `<agent>_<taskid>.lock`
-- If local rules and the current tasklist conflict, follow `.agent-rules.md` first.
+- Lock file naming is strictly `<agent>_<taskid>.lock` (e.g., `codex_t03160314.p010.lock`).
+- If local rules and the current tasklist conflict, `.agent-rules.md` takes precedence for process/repo constraints, while `tasklist_rules.md` defines tasklist structures.
 - If an AI already has an unfinished lock task, it must continue that task first.
 
-## Allowed Tasklist Updates and  File Modifications
+## Allowed Tasklist Updates and File Modifications
 
-As an executor, update only the fields allowed by local rules. In most repositories these are:
-
-- `Owner`
-- `Status`
-- `Claim`
-- `Finish`
-- `Report`
-- `Git`
-- `Review`
-- `Score`
-
-Do not modify the tasklist table structure unless the user explicitly asked you to redesign the tasklist format.
+Update only the tasklist fields allowed by `tasklist_rules.md`.
+Do not modify the tasklist table structure unless requested.
 
 Only modify files required by rule and task:
 - own task log: `tasks/<agent>/...`
@@ -143,15 +125,15 @@ Only modify files required by rule and task:
   - no required refactor remains
   - task log is complete
 
-## to backup a done tasklist 
-   when no point to by others directly a different dir, move it to /docs/backuptask/
+## Backup a Done Tasklist
+When a done tasklist is no longer needed directly by others, move it to the backup directory (e.g., `docs/backuptask/`) as defined in your local setup.
 
 
 ## Quick Reference
 
 - Build tasklist: read rules -> create tasklist -> self-review -> register if required
 - Execute task: read rules -> inspect locks -> claim -> implement -> verify -> self-review -> update tasklist -> unlock
-- Missing rule files: stop and report
+- Missing bootstrap files: copy templates and create the default files/directories
 - Existing own lock: resume before starting new work
 
 ## Common Mistakes
@@ -164,7 +146,7 @@ Only modify files required by rule and task:
 
 ## Example Invocations
 
-- `Use taskexec to run docs/backuptask/tasklist03200058.md`
+- `Use taskexec to run docs/backuptask/tasklist03201111.md`
 - `Use taskexec to build tasklist, "Refactor checkout discount flow with tests first"`
 
 ## Bootstrapping A New Repository
@@ -173,5 +155,7 @@ When a repository wants to adopt this workflow but does not yet have local rule 
 
 1. Copy `assets/templates/.agent-rules.md` to the repository root.
 2. Copy `assets/templates/tasklist_rules.md` to the repository root.
-3. Adapt agent names, commit rules, tasklist columns, and memory paths to the repository.
-4. Only then start building or executing tasklists with this skill.
+3. Create `tasklistall.md`, `memorys/global.md`, `tasks/locks/`, and `tasks/<agent>/` in the default paths.
+4. Write the active default/custom paths into the repository's `.agent-rules.md`.
+5. When the first tasklist is needed, create `tasklistMMDDhhmm.md`.
+6. Only then start building or executing tasklists with this skill.
