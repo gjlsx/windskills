@@ -16,7 +16,6 @@ Scheduler creates and maintains the structure of the tasklist. Executor may upda
 ## Required Tasklist Structure
 
 Each tasklist should include:
-
 1. tasklist title
 2. overall task name
 3. overall task description
@@ -57,6 +56,7 @@ Each tasklist should include:
 - If the creator is unavailable, stop and hand the decision back to a human.
 - Follow-up bugfix rows should set `Type` to `bugfix`.
 - Include `FIX:<source_taskid>` in the `Description` or in the referenced `Detail` document.
+- Direct fix commits outside taskexec follow the repository `.agent-rules.md` issue rules; they are not encoded as `ISSUE-XXX` inside tasklist rows by default.
 
 ## Task Table
 

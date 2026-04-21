@@ -127,16 +127,66 @@ Treat `tasks/details/d_<taskid>.md` as read-only during task execution unless th
 
 ## Verification Rules
 
-- Never mark a task `done` without fresh verification evidence.
-- Run the repository's required test or validation commands.
-- If no automated tests exist, add minimal validation or record manual verification evidence in the task log.
-- Self-review must confirm:
+
+- Never mark `done` unless required tests pass.
+- If no tests exist, add minimal validation or record clear manual evidence.
+- If a task affects any browser-visible page, entry, menu, button, form, redirect, list, detail view, or browser-executed workflow, browser validation is mandatory before `done`.
+- For browser-required tasks, direct URL access alone does not count when the task claims a new entry/menu/button; verify from the claimed entry point.
+- For browser-required tasks, route response, page title, redirect-to-login, `vite build`, unit tests, helper tests, and file existence checks are supporting evidence only; they do not by themselves justify `done`.
+- For browser submit/workflow tasks, verify both:
+  - the front-end action succeeds in the browser under the required runtime state
+  - the result is visible in a downstream surface such as the next page, admin/backoffice, list/status change, network response, or database evidence
+- If a browser task cannot be fully verified because of missing account, missing data, env mismatch, or runtime mismatch, mark it `partial` or `blocked`, record the gap explicitly, and continue. Do not mark it `done`.
+- Self-review must explicitly check:
   - requirement satisfied
-  - verification passed
+  - tests passed
   - no obvious duplicate logic left unhandled
-  - naming is consistent
+  - naming consistent
   - no required refactor remains
-  - task log is complete
+  - task log complete
+- For browser-required tasks, self-review must also explicitly check:
+  - exact URL(s) tested
+  - account or runtime state used, if any
+  - whether verification was route-check, entry-check, or full flow-check
+  - what exact downstream result was observed
+- Task is `done` only if all are true:
+  - implementation complete
+  - tests passed
+  - self-review passed
+  - task log written
+  - tasklist updated
+  - lock removed
+  - if browser-required: runtime/browser evidence recorded and matched the claimed result
+
+### Browser Evidence Format
+
+When browser validation is required, add a `Browser Evidence` section to the task log.
+
+Use this structure:
+- Environment:
+  - base URL(s)
+  - build/dev mode
+- Account:
+  - username, role, or runtime state used
+- Entry Path:
+  - where the flow started
+  - whether direct URL was used, and why
+- Action:
+  - exact clicks/submissions performed
+- Expected:
+  - specific browser result and downstream result required by the task
+- Observed:
+  - exact browser result and downstream result actually observed
+- Result:
+  - `pass`
+  - `partial`
+  - `fail`
+
+### Runtime Dependency Rule
+
+- If task B depends on task A and task A is a browser page/flow task, task B may not treat A as fully accepted unless A has runtime/browser evidence.
+- If task A only has code/test evidence but no runtime/browser evidence, task B must treat A as `code-landed-not-runtime-accepted`.
+- Downstream closure/review/regression tasks must re-check the real runtime state instead of inheriting optimistic conclusions from upstream logs.
 
 ## Tasklist State And Follow-up
 
@@ -179,4 +229,5 @@ When a repository wants to adopt this workflow but does not yet have local rule 
 4. Create `memorys/global.md` only if the repository wants a global memory file.
 5. Write the active default/custom paths into the repository's `.agent-rules.md`.
 6. Create the first `tasklistMMDDhhmm.md` when work begins.
-7. Only then start building or executing tasklists with this skill.
+7. Copy `scripts/new_issue.sh` and `scripts/gen_issues.sh` to the repository `/scripts/` dir.
+8. Only then start building or executing tasklists with this skill.
