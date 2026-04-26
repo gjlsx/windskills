@@ -16,4 +16,4 @@ DetailFile: docs/issues/ISSUE-002.md
 
 ## Evidence
 - `D:\phpStudy\WWW\likeshop\.agent-rules.md`
-- `D:\phpStudy\WWW\likeshop\docs\issue_index.md`
+- `D:\work\aiwork\windskills\taskexec\windskills\docs\issue_index.md`

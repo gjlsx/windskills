@@ -12,9 +12,11 @@ Repository root:
 Per-subproject taskexec scope root, for example `taskexec/<subproject>/`:
 
 - `tasklistall.md`
-- `codex/` for active tasklists
+- scope-root top-level `tasklistMMDDhhmm.md` files for active tasklists
 - `docs/backuptask/` for archived tasklists
 - `docs/qa/` for taskexec-generated verification reports
+- `docs/issue_index.md` for direct-fix issue index
+- `docs/issues/` for direct-fix issue detail files
 - `locks/`
 - `tasklog/`
 - `details/` when the repository uses long-form task detail docs
@@ -41,11 +43,13 @@ At minimum, the repository should define:
 - definition of done
 - commit requirements, including claim-status commits and tasklist state commits
 
-Local rules should not redefine the fixed taskexec subdirectories inside the scope root. This skill assumes:
+Local rules should not redefine the fixed taskexec layout inside the scope root. This skill assumes:
 
-- active tasklists only under `codex/`
+- active tasklists only at the scope-root top level
 - archived tasklists only under `docs/backuptask/`
 - taskexec-generated verification reports under `docs/qa/`
+- direct-fix issue index under `docs/issue_index.md`
+- direct-fix issue detail files under `docs/issues/`
 - task logs under `tasklog/`
 - detail docs under `details/`
 - locks under `locks/`
@@ -67,7 +71,7 @@ When adapting an existing project-specific task execution process into this skil
 
 This skill should trigger for prompts like:
 
-- `Use taskexec to run taskexec/windskills/codex/tasklist04121000.md`
+- `Use taskexec to run taskexec/windskills/tasklist04121000.md`
 - `Build a tasklist for the payment retry cleanup in subproject checkout-admin`
 - `Execute the next codex task from taskexec/likeshop-admin/tasklistall.md`
-- `Append a follow-up bugfix to the current tasklist in taskexec/mobile-store/codex/`
+- `Append a follow-up bugfix to the current tasklist in taskexec/mobile-store/`

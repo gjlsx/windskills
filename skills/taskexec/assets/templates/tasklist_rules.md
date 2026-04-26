@@ -19,16 +19,16 @@ All taskexec path fields are scope-relative paths inside the current taskexec sc
 
 Within the current taskexec scope root:
 
-- active tasklists must live under `codex/`
+- active tasklists must live directly at the scope-root top level
 - archived tasklists must live under `docs/backuptask/`
 - verification reports should live under `docs/qa/`
 - detail docs must live under `details/`
 - task logs must live under `tasklog/`
 - locks must live under `locks/`
 - `tasklistall.md` stays at the scope-root top level
-- `tasklistall.md` `Dir` values may only be `codex/` or `docs/backuptask/`
+- `tasklistall.md` `Dir` values may only be `./` or `docs/backuptask/`
 
-Do not place active tasklists at the scope-root top level. Do not invent another tasklist directory.
+Do not place active tasklists under a custom subdirectory. Do not invent another tasklist directory.
 
 ## Required Tasklist Structure
 
@@ -47,7 +47,7 @@ Each tasklist should include:
 ## Tasklist Naming
 
 - file name format: `tasklistMMDDhhmm.md`
-- active tasklist file path format: `codex/tasklistMMDDhhmm.md`
+- active tasklist file path format: `tasklistMMDDhhmm.md`
 - archived tasklist file path format: `docs/backuptask/tasklistMMDDhhmm.md`
 - overall task name should begin with `<creator>:` such as `codex: Bucket sort demo regression fix`
 - section 5 should record `creator: <agent>`
@@ -140,7 +140,7 @@ If review is `fail`, revise the tasklist and review again until it passes.
 
 ## Tasklist Commit Points
 
-1. After review passes and before doing task execution, register the tasklist in the current scope root's `tasklistall.md` with `Dir` set to `codex/` according to the repository `.agent-rules.md`.
+1. After review passes and before doing task execution, register the tasklist in the current scope root's `tasklistall.md` with `Dir` set to `./` according to the repository `.agent-rules.md`.
 2. Immediately after registration, read that scope-local `tasklistall.md`, rescan all indexed `active` tasklists within the same scope root according to the repository `.agent-rules.md`, archive any tasklist whose rows are all `done`, update `tasklistall.md`, and commit the `tasklistall.md` change.
 3. After initial registration and the active-tasklist sweep, create a tasklist build commit whose message includes `tasklist filename + overall task title/description`.
 4. After changing a task row from `todo` to `doing`, commit the tasklist file.

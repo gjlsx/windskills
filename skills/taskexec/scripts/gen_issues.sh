@@ -1,10 +1,20 @@
 #!/bin/bash
-## rebuild docs/issue_index.md from canonical docs/issues/ISSUE-XXX.md files
+## usage: ./gen_issues.sh taskexec/<subproject>
 
-OUTPUT="docs/issue_index.md"
-ISSUE_DIR="docs/issues"
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  echo "Usage: $0 taskexec/<subproject>" >&2
+  exit 1
+fi
+
+SCOPE_ROOT="${1%/}"
+OUTPUT="$SCOPE_ROOT/docs/issue_index.md"
+ISSUE_DIR="$SCOPE_ROOT/docs/issues"
 
 echo "Generating issue index..."
+
+mkdir -p "$ISSUE_DIR"
 
 echo "# Issue Index" > "$OUTPUT"
 echo "" >> "$OUTPUT"
