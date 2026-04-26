@@ -17,7 +17,7 @@ project: demo-project
 created_at: 260316185749
 updated_at: 260316185749
 status: doing
-log: tasks/tasklog/codex_t03231200.p001.md
+log: tasklog/codex_t03231200.p001.md
 ```
 
 Rules:
