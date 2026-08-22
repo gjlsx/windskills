@@ -124,6 +124,8 @@ Use this mode when the user asks to run tasks from an existing tasklist.
 
 ### Required Commit Chain
 
+Every Git commit associated with a task must include the trailer `Task: tasklistMMDDhhmm.<taskid>`; for example, `Task: tasklist08222200.t08222200.p005`.
+
 Persist task execution in this order:
 
 1. Commit all task implementation files using the repository's task commit rule.
